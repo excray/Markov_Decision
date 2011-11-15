@@ -6,7 +6,7 @@ package a3;
 
 /**
  *
- * @author Vivek
+ * @author 
  */
 
 import java.util.Map;
@@ -77,7 +77,8 @@ public class ValueIteration<S, A extends Action> {
 						aSum += mdp.transitionProbability(sDelta, s, a)
 								* U.get(sDelta);
 					}
-					if (aSum > aMax) {
+					if (aSum > aMax){
+                                          //  aSum > aMax) {
 						aMax = aSum;
                                                 optimalAction.put(s, a);
 					}

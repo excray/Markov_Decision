@@ -6,7 +6,7 @@ package a3;
 
 /**
  *
- * @author Vivek
+ * @author 
  */
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Collections;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.omg.CORBA.Environment;
 
 public class A3 {
 
@@ -37,6 +35,9 @@ public class A3 {
 
         //Problem1
         runProblem1();
+        //Problem3
+        runProblem3();
+
     }
 
     private static Map<Cell<Double>, CellAction> GetOptimalAction(int xdim, int ydim, double r) {
@@ -178,7 +179,7 @@ public class A3 {
 
             for (int i = 0; i < finalThresholds.size(); i++) {
                 String ub = finalThresholds.get(i).toString();
-                ub = ub.substring(0,8);
+                ub = ub.substring(0, 8);
                 if (i != finalThresholds.size() - 1) {
                     out.write(lb + " > R(s) > " + ub + "\n");
                 } else {
@@ -375,5 +376,179 @@ public class A3 {
             }
         };
         return rf;
+    }
+
+    private static MarkovDecisionProcess<Cell<Double>, CellAction> createMDP1(Table<Double> table) {
+
+        return new MDP<Cell<Double>, CellAction>(table.getCells(),
+                table.getCellAt(1, 1), createActionsFunction1(table),
+                createTransitionProbability(table),
+                createRewardFunction());
+    }
+
+    private static ActionsFunction<Cell<Double>, CellAction> createActionsFunction1(
+            final Table<Double> cw) {
+        final Set<Cell<Double>> terminals = new HashSet<Cell<Double>>();
+        terminals.add(cw.getCellAt(3, 3));
+
+        ActionsFunction<Cell<Double>, CellAction> af = new ActionsFunction<Cell<Double>, CellAction>() {
+
+            @Override
+            public Set<CellAction> actions(Cell<Double> s) {
+                // All actions can be performed in each cell
+                // (except terminal states)
+                if (terminals.contains(s)) {
+                    return Collections.emptySet();
+                }
+                return CellAction.actions();
+            }
+        };
+        return af;
+    }
+
+    private static void runProblem3() {
+        table = createTable(Double.class, 3, 3, -1.0);
+        table.getCellAt(1, 3).setContent(3.0);
+        table.getCellAt(3, 3).setContent(10.0);
+
+
+
+        double l = 0.01, r = 0.998, mid = 0.0;
+
+        ArrayList<Double> allThresholds = new ArrayList();
+        ArrayList<Double> finalThresholds = new ArrayList();
+
+        ArrayList<Map<Cell<Double>, CellAction>> allActions = new ArrayList<Map<Cell<Double>, CellAction>>();
+        Stack<Double> stackHolder = new Stack<Double>();
+        stackHolder.push(r);
+        stackHolder.push(l);
+        Map<Double, Map<Cell<Double>, CellAction>> actionMap = new LinkedHashMap<Double, Map<Cell<Double>, CellAction>>();
+        Map<Double, Map<Cell<Double>, Double>> utilMap = new LinkedHashMap<Double, Map<Cell<Double>, Double>>();
+
+        while (stackHolder.empty() == false) {
+
+
+            l = stackHolder.pop();
+            r = stackHolder.pop();
+
+            boolean leftFound = false, rightFound = false;
+
+            if (Math.abs(r - l) > 0.00001) {
+
+                mid = (l + r) / 2.0;
+                Map<Cell<Double>, CellAction> optimalActionl = new LinkedHashMap<Cell<Double>, CellAction>();
+                Map<Cell<Double>, CellAction> optimalActionm = new LinkedHashMap<Cell<Double>, CellAction>();
+                Map<Cell<Double>, CellAction> optimalActionr = new LinkedHashMap<Cell<Double>, CellAction>();
+
+
+                Map<Cell<Double>, Double> util1 = GetOptimalAction1(table, l, optimalActionl);
+                Map<Cell<Double>, Double> utilm = GetOptimalAction1(table, mid, optimalActionm);
+                Map<Cell<Double>, Double> utilr = GetOptimalAction1(table, r, optimalActionr);
+
+                if (compareMaps(optimalActionr, optimalActionm) == false) {
+                    stackHolder.push(r);
+                    stackHolder.push(mid);
+                    leftFound = true;
+                }
+
+                if (compareMaps(optimalActionl, optimalActionm) == false) {
+                    stackHolder.push(mid);
+                    stackHolder.push(l);
+                    // allThresholds.add(mid);
+                    rightFound = true;
+                }
+
+                if (leftFound || rightFound) {
+                    allThresholds.add(mid);
+                    actionMap.put(mid, optimalActionm);
+                    utilMap.put(mid, utilm);
+                }
+            }
+        }
+
+
+        //   allThresholds.add(0.0);
+        // actionMap.put(0.0, GetOptimalAction(xdim, ydim, 0.0));
+        Collections.sort(allThresholds);
+
+        int t = 0;
+        for (int i = 0; i < allThresholds.size() - 1; i++) {
+            Map<Cell<Double>, CellAction> c1 = actionMap.get(allThresholds.get(i));
+            Map<Cell<Double>, CellAction> c2 = actionMap.get(allThresholds.get(i + 1));
+            if (compareMaps(c1, c2) == false) {
+                t = i;
+                finalThresholds.add(allThresholds.get(i));
+            }
+        }
+
+        finalThresholds.add(allThresholds.get(t + 1));
+        
+          try {
+            // Create file 
+            FileWriter fstream = new FileWriter("P3-output.txt");
+            BufferedWriter out = new BufferedWriter(fstream);
+
+            //first threshold
+            // out.write("R(s)=0.0\n");
+            //out.write(System.getProperty("line.separator"));
+
+            // printOptimal(xdim, ydim, actionMap.get(0.0), null, out);
+            Map<Cell<Double>, CellAction> t1 = actionMap.get(finalThresholds.get(1));
+            Map<Cell<Double>, CellAction> t2;
+//            
+//            out.write(finalThresholds.get(0).toString() + " > R(s) > " + finalThresholds.get(1).toString() + "\n");
+//            out.write(System.getProperty("line.separator"));
+//
+//           // t2 = actionMap.get(finalThresholds.get(i + 1));
+//            printOptimal(xdim, ydim, t1, null, out);
+//            printOptimal(xdim, ydim, t1, null, out);
+
+
+            String lb = "0.0";
+
+            for (int i = 0; i < finalThresholds.size(); i++) {
+                String ub = finalThresholds.get(i).toString();
+                ub = ub.substring(0, 8);
+                if (i != finalThresholds.size() - 1) {
+                    out.write(lb + " > R(s) > " + ub + "\n");
+                } else {
+                    out.write("1 > R(s) > " + lb + "\n");
+                }
+                out.write(System.getProperty("line.separator"));
+
+
+                t2 = actionMap.get(finalThresholds.get(i));
+                if (i == 0) {
+                    printOptimal(3, 3, t2, null, out);
+                } else {
+                    printOptimal(3, 3, t2, t1, out);
+                }
+
+                t1 = t2;
+                lb = ub;
+            }
+
+//            out.write("R(s) > " + finalThresholds.get(finalThresholds.size()-1).toString() + "\n");           //Close the output stream
+//            out.write(System.getProperty("line.separator"));
+//
+//            t2 = actionMap.get(finalThresholds.get(finalThresholds.size()-2));
+//            printOptimal(xdim, ydim, t1, t2, out);
+            out.close();
+
+        } catch (Exception e) {//Catch exception if any
+            System.err.println("Error: " + e.getMessage());
+        }
+
+    }
+
+    private static Map<Cell<Double>, Double> GetOptimalAction1(Table table, double mid, Map<Cell<Double>, CellAction> optimalAction) {
+        MarkovDecisionProcess<Cell<Double>, CellAction> mdp = createMDP1(table);
+        ValueIteration<Cell<Double>, CellAction> vi = new ValueIteration<Cell<Double>, CellAction>(
+                mid);
+
+
+        Map<Cell<Double>, Double> U = vi.valueIteration(mdp, 0.0001, optimalAction);
+        return U;
+
     }
 }

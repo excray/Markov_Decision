@@ -1,0 +1,42 @@
+0.0 > R(s) > 0.699998
+
+None	Right	10.0	
+Up	Up	Up	
+Up	Up	Up	
+
+
+0.699998 > R(s) > 0.844552
+
+None	Left*	10.0	
+Up	Up	Up	
+Up	Up	Up	
+
+
+0.844552 > R(s) > 0.844702
+
+None	Left	10.0	
+Up	Up	Left*	
+Up	Up	Up	
+
+
+0.844702 > R(s) > 0.873384
+
+None	Left	10.0	
+Up	Left*	Left	
+Up	Up	Left*	
+
+
+0.873384 > R(s) > 0.969054
+
+None	Left	10.0	
+Up	Left	Left	
+Up	Left*	Left	
+
+
+1 > R(s) > 0.969054
+
+None	Left	10.0	
+Up	Left	Down*	
+Up	Left	Left	
+
+
