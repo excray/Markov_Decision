@@ -1,63 +1,69 @@
-0.0 > R(s) > -0.02209
+For action Up from Cell 3,1, the two other actions that are possible are left which takes it to cell 2,1 or right which takes it to cell 4,1
+Now even though the utility at 3,2 is higher, the  expected utility is product of the transition probabilty and the utility at that state
+So for action Up, the expected utility is 0.8*0.660+0.1*0.387+0.1*0.655 which is equal to 0.6322
+For action left, it is 0.8*0.655 + 0.1*0.660 + 0.1* 0.611 which is equal to 0.6511
+For action left expected utility is higher, so the opimal policy says to move left
 
-Right	Right	Right	1.0	
-Up	X	Left	-1.0	
-Up	Left	Left	Down	
+0.0 > R(s) > -0.0220
 
-
--0.02209 > R(s) > -0.02734
-
-Right	Right	Right	1.0	
-Up	X	Left	-1.0	
-Up	Left	Left	Left*	
-
-
--0.02734 > R(s) > -0.04479
-
-Right	Right	Right	1.0	
-Up	X	Up*	-1.0	
-Up	Left	Left	Left	
+->	->	->	1.0	
+^	X	<-	-1.0	
+^	<-	<-	v	
 
 
--0.04479 > R(s) > -0.08496
+-0.0220 > R(s) > -0.0273
 
-Right	Right	Right	1.0	
-Up	X	Up	-1.0	
-Up	Left	Up*	Left	
-
-
--0.08496 > R(s) > -0.45257
-
-Right	Right	Right	1.0	
-Up	X	Up	-1.0	
-Up	Right*	Up	Left	
+->	->	->	1.0	
+^	X	<-	-1.0	
+^	<-	<-	<-*	
 
 
--0.45257 > R(s) > -0.73107
+-0.0273 > R(s) > -0.0447
 
-Right	Right	Right	1.0	
-Up	X	Up	-1.0	
-Up	Right	Up	Up*	
-
-
--0.73107 > R(s) > -1.56420
-
-Right	Right	Right	1.0	
-Up	X	Up	-1.0	
-Right*	Right	Up	Up	
+->	->	->	1.0	
+^	X	^*	-1.0	
+^	<-	<-	<-	
 
 
--1.56420 > R(s) > -1.64965
+-0.0447 > R(s) > -0.0849
 
-Right	Right	Right	1.0	
-Up	X	Up	-1.0	
-Right	Right	Right*	Up	
+->	->	->	1.0	
+^	X	^	-1.0	
+^	<-	^*	<-	
 
 
-INF > R(s) > -1.64965
+-0.0849 > R(s) > -0.4525
 
-Right	Right	Right	1.0	
-Up	X	Right*	-1.0	
-Right	Right	Right	Up	
+->	->	->	1.0	
+^	X	^	-1.0	
+^	->*	^	<-	
+
+
+-0.4525 > R(s) > -0.7310
+
+->	->	->	1.0	
+^	X	^	-1.0	
+^	->	^	^*	
+
+
+-0.7310 > R(s) > -1.5642
+
+->	->	->	1.0	
+^	X	^	-1.0	
+->*	->	^	^	
+
+
+-1.5642 > R(s) > -1.6496
+
+->	->	->	1.0	
+^	X	^	-1.0	
+->	->	->*	^	
+
+
+-INF > R(s) > -1.6496
+
+->	->	->	1.0	
+^	X	->*	-1.0	
+->	->	->	^	
 
 

@@ -1,0 +1,17 @@
+Optimum utility when  -0.04
+0.81155	0.86780	0.91780	1.0	
+0.76155	X	0.66027	-1.0	
+0.70530	0.65530	0.61141	0.38792	
+
+
+
+______________________________________________________
+First Run reward is -1.2
+Mean for 10 runs :0.272
+SD for 10 runs: 0.70354
+Mean for 100 runs :0.32640
+SD for 100 runs: 0.62570
+Mean for 1000 runs :0.37683
+SD for 1000 runs: 0.60407
+
+Expected reward from start state: 0.67999
